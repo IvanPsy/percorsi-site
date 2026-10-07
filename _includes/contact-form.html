@@ -1,0 +1,112 @@
+{% comment %}
+  Modulo di contatto dell'incubatore. Derivato da quello di Equilibrio (21/08/2026)
+  e ridotto all'osso: niente pixel, niente eventi, niente conversioni.
+  Regola ereditata e non negoziabile: il successo si dichiara SOLO dopo che il
+  server ha risposto {"ok":true}. Se la consegna fallisce, la pagina lo dice e
+  offre email e WhatsApp con il testo già pronto.
+  Parametri: source (nome della pagina, obbligatorio), chips (lista di righe
+  separate da "|" che diventano pulsanti facoltativi: ogni pulsante PREPONE la sua
+  riga nel messaggio, che resta dell'utente e si può cancellare).
+{% endcomment %}
+{% assign form_source = include.source | default: "Percorsi - pagina generica" %}
+{% if include.chips %}{% assign chips = include.chips | split: "|" %}{% endif %}
+
+<div class="cform" id="cformBlock">
+  <p class="cform-privacy"><span class="cform-badge">Arriva a me</span> La mail arriva direttamente a <strong>{{ site.email }}</strong>. Nessun centralino, nessuna segreteria, nessuna newsletter.</p>
+  <form id="cform" onsubmit="return cformSubmit(event)">
+    <div class="cform-field">
+      <label for="cfEmail">La tua email <span class="req">*</span></label>
+      <input type="email" id="cfEmail" name="email" placeholder="L'indirizzo dove posso risponderti" required autocomplete="email">
+    </div>
+{% if chips %}
+    <div class="cform-chips" id="cfChips">
+      <p class="cform-chips-label">Da dove parti? <span class="opt">(facoltativo, anche più di una)</span></p>
+      <div class="cform-chips-row">
+{% for c in chips %}
+        <button type="button" class="chip" aria-pressed="false" data-line="{{ c | strip }}">{{ c | strip }}</button>
+{% endfor %}
+      </div>
+      <p class="cform-chips-note">Quello che scegli compare qui sotto, nel messaggio: puoi modificarlo o cancellarlo prima di inviare.</p>
+    </div>
+{% endif %}
+    <div class="cform-field">
+      <label for="cfMsg">Raccontami in due righe la situazione <span class="opt">(facoltativo)</span></label>
+      <textarea id="cfMsg" name="messaggio" rows="4" placeholder="Quanti anni ha, cosa succede in casa, cosa avete già provato. Puoi non fare nomi."></textarea>
+    </div>
+    <input type="hidden" id="cfSource" value="{{ form_source }}">
+    <p class="cform-error" id="cfError" hidden>Inserisci un indirizzo email valido.</p>
+    <button type="submit" class="btn btn-primary" id="cfBtn">Scrivimi, ti rispondo entro 24 ore</button>
+    <p class="cform-note">Solo email. Rispondo io, personalmente, con due possibilità di orario per una chiamata di 15 minuti.</p>
+  </form>
+</div>
+
+<div class="cform-done" id="cformDone" hidden>
+  <p class="cform-done-icon" aria-hidden="true">✓</p>
+  <h3>Messaggio ricevuto</h3>
+  <p>Ti rispondo personalmente entro 24 ore lavorative, con due possibilità di orario. Controlla anche la cartella spam.</p>
+</div>
+
+<div class="cform-fallback" id="cformFallback" hidden>
+  <h3>Il messaggio non è partito</h3>
+  <p>È un problema mio, non tuo, e non voglio che vada perso. Il testo che hai scritto è già pronto qui sotto.</p>
+  <a href="#" id="cfMailto" class="btn btn-primary">Mandalo dalla tua email →</a>
+  <p class="cform-note">Oppure <a href="https://wa.me/{{ site.whatsapp_number }}" id="cfWa" target="_blank" rel="noopener">mandamelo su WhatsApp</a>. Il mio indirizzo è <strong>{{ site.email }}</strong>.</p>
+</div>
+
+<script>
+(function () {
+  var box = document.getElementById('cfChips'), ta = document.getElementById('cfMsg');
+  if (!box || !ta) return;
+  var chips = box.querySelectorAll('.chip'), prefix = '';
+  function rebuild() {
+    var lines = [];
+    chips.forEach(function (c) { if (c.getAttribute('aria-pressed') === 'true') lines.push(c.getAttribute('data-line')); });
+    var next = lines.length ? lines.join('\n') + '\n\n' : '';
+    var rest = ta.value;
+    if (prefix && rest.indexOf(prefix) === 0) rest = rest.slice(prefix.length);
+    ta.value = next + rest; prefix = next;
+  }
+  chips.forEach(function (c) {
+    c.addEventListener('click', function () {
+      var on = c.getAttribute('aria-pressed') !== 'true';
+      c.setAttribute('aria-pressed', on ? 'true' : 'false');
+      c.classList.toggle('on', on);
+      rebuild();
+    });
+  });
+})();
+
+function cformSubmit(e) {
+  e.preventDefault();
+  var email = document.getElementById('cfEmail').value.trim();
+  var msg = document.getElementById('cfMsg').value.trim();
+  var source = document.getElementById('cfSource').value;
+  var btn = document.getElementById('cfBtn');
+  var err = document.getElementById('cfError');
+  if (!email || email.indexOf('@') === -1) { err.hidden = false; return false; }
+  err.hidden = true; btn.disabled = true; btn.textContent = 'Invio in corso…';
+
+  var ENDPOINT = '{{ site.contact_endpoint }}', chiuso = false;
+  function show(id) { ['cformBlock','cformDone','cformFallback'].forEach(function (x) { document.getElementById(x).hidden = (x !== id); }); }
+  function consegnato() { show('cformDone'); }
+  function nonConsegnato(motivo) {
+    if (window.console && console.warn) console.warn('[cform] consegna non confermata:', motivo);
+    var oggetto = 'Richiesta dal sito (' + source + ')';
+    document.getElementById('cfMailto').href = 'mailto:{{ site.email }}?subject=' + encodeURIComponent(oggetto) + '&body=' + encodeURIComponent(msg);
+    if (msg) document.getElementById('cfWa').href = 'https://wa.me/{{ site.whatsapp_number }}?text=' + encodeURIComponent(msg);
+    show('cformFallback');
+  }
+  function concludi(fn, motivo) { if (chiuso) return; chiuso = true; fn(motivo); }
+  if (!ENDPOINT) { concludi(nonConsegnato, 'contact_endpoint vuoto'); return false; }
+
+  var corpo = new URLSearchParams();
+  corpo.append('email', email); corpo.append('messaggio', msg);
+  corpo.append('source', source); corpo.append('pagina', window.location.href);
+  var timer = setTimeout(function () { concludi(nonConsegnato, 'timeout'); }, 15000);
+  fetch(ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' }, body: corpo.toString() })
+    .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.text(); })
+    .then(function (t) { if (t.indexOf('"ok":true') === -1) throw new Error('risposta inattesa'); clearTimeout(timer); concludi(consegnato); })
+    .catch(function (x) { clearTimeout(timer); concludi(nonConsegnato, (x && x.message) || x); });
+  return false;
+}
+</script>

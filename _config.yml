@@ -1,0 +1,52 @@
+# percorsi.ivanferrero.it — incubatore dei percorsi clinici in prova
+# Un sottodominio, una cartella per percorso. Un percorso che supera il cancello
+# (5 contatti clinici qualificati, come Equilibrio) si guadagna il suo sito;
+# uno che non lo supera si archivia spostando la cartella in _archivio/.
+title: "Percorsi · Ivan Ferrero"
+url: "https://percorsi.ivanferrero.it"
+baseurl: ""
+description: "Percorsi di psicoterapia online a sedute contate, per chi sta accanto a un problema: genitori, partner, familiari. Ivan Ferrero, psicologo e psicoterapeuta."
+
+author: "Ivan Ferrero"
+credentials: "Psicologo e Psicoterapeuta"
+piva: "09303360011"
+albo: "iscritto all'Albo degli Psicologi della Lombardia, sezione A, n. 16571 dal 2006"
+email: "ivan@ivanferrero.it"
+whatsapp_number: "393334339624"
+hub_url: "https://www.ivanferrero.it/"
+equilibrio_url: "https://equilibrio.ivanferrero.it/"
+opl_url: "https://www.opl.it/psicologi/16571/Ferrero-Ivan"
+linkedin_url: "https://www.linkedin.com/in/ivan-ferrero-psicologo"
+
+# Listino unico dell'incubatore: su ogni nicchia variano i contenuti, non il
+# formato né il prezzo (decisione del 07/10/2026). Si cambia qui, una volta sola.
+prezzo_seduta: "120"
+prezzo_valutazione: "150"
+durata_seduta: "50 minuti"
+nota_costi: "A ogni importo si aggiungono il 2% ENPAP e 2 euro di bollo. Fattura dopo ogni incontro, detraibile al 19% come spesa sanitaria."
+
+# Modulo di contatto: lo stesso Apps Script di Equilibrio (manda una email vera a
+# Ivan e risponde {"ok":true}; il campo "source" dice da quale pagina arriva).
+# Script e istruzioni: clinica/framework/dipendenze-sessuali_framework/framework-clinico/
+# de_cartella_lavoro/sito/equilibrio-contatti.gs. Vuoto = il modulo mostra subito
+# le vie dirette (email e WhatsApp) invece di fingere di aver inviato.
+contact_endpoint: "https://script.google.com/macros/s/AKfycbxTh7Ny9BqsWV4TPbgWJlF25nKJPHC_rzHaqXvOgsbHeQmak_xcbKWY5u78-W_WiZE/exec"
+
+# Nessun tag Ads, nessun GA4, nessun font esterno, nessun cookie: il sito non ha
+# bisogno di banner. Se un giorno partono gli annunci, il tag va aggiunto in
+# _includes/head.html insieme a un banner di consenso, e /privacy/ va riscritta.
+
+markdown: kramdown
+permalink: pretty
+
+plugins:
+  - jekyll-seo-tag
+  - jekyll-sitemap
+
+exclude:
+  - README.md
+  - CLAUDE.md
+  - Gemfile
+  - Gemfile.lock
+  - .DS_Store
+  - _archivio/

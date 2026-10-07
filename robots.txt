@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://percorsi.ivanferrero.it/sitemap.xml
