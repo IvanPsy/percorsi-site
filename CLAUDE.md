@@ -37,6 +37,8 @@ Filo che lega i percorsi: **si lavora con chi sta accanto al problema** (genitor
 
 - 2026-10-07: repo creato in locale con home, `/genitori/`, `/privacy/`. **Non ancora su GitHub, DNS non ancora puntato.** Prossimi passi di Ivan: creare il repo `percorsi-site` su GitHub (IvanPsy), push, attivare Pages con il CNAME, aggiungere su Aruba il record CNAME `percorsi` → `ivanpsy.github.io`, poi link dalla home di ivanferrero.it. Prima di accendere annunci: preparazione clinica (manuale di Lebowitz, FASA, materiali per i genitori), stimata in due o tre settimane.
 - Candidata successiva: familiari di chi gioca d'azzardo (pacchetto prepagato come parte del setting).
+- 2026-10-07 sera: sito online su https://percorsi.ivanferrero.it/ con HTTPS forzato (repo su GitHub IvanPsy/percorsi-site, CNAME su Aruba). Lavori successivi affidati a chat separate: link dalla home di ivanferrero.it, preparazione clinica del percorso genitori in `clinica/framework/percorso_genitori/` (da creare), pagina `familiari-gioco/`.
+- ⚠️ Skill: oggi nessuna skill copre questo sito. Quando il percorso genitori avrà i suoi materiali, decidere se nasce `percorsi-content` o se si estende `copy-clinico`, e registrarlo in `skill-registry`.
 
 ## Connessioni
 
