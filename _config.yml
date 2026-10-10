@@ -21,7 +21,7 @@ linkedin_url: "https://www.linkedin.com/in/ivan-ferrero-psicologo"
 # Listino unico dell'incubatore: su ogni nicchia variano i contenuti, non il
 # formato né il prezzo (decisione del 07/10/2026). Si cambia qui, una volta sola.
 prezzo_seduta: "120"
-prezzo_valutazione: "150"
+prezzo_valutazione: "230"
 durata_seduta: "50 minuti"
 nota_costi: "A ogni importo si aggiungono il 2% ENPAP e 2 euro di bollo. Fattura dopo ogni incontro, detraibile al 19% come spesa sanitaria."
 
