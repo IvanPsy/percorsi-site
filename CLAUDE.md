@@ -39,7 +39,7 @@ Filo che lega i percorsi: **si lavora con chi sta accanto al problema** (genitor
 - Candidata successiva: familiari di chi gioca d'azzardo (pacchetto prepagato come parte del setting).
 - 2026-10-07 sera: sito online su https://percorsi.ivanferrero.it/ con HTTPS forzato (repo su GitHub IvanPsy/percorsi-site, CNAME su Aruba). Lavori successivi affidati a chat separate: link dalla home di ivanferrero.it, preparazione clinica del percorso genitori in `clinica/framework/percorso_genitori/` (da creare), pagina `familiari-gioco/`.
 - 2026-10-08: online il link dalla home (card Psicoterapia) e dal footer di ivanferrero.it (commit `f30c4e9` di quel repo) e le tre correzioni di `/genitori/`: totale 1.520, «alcuni ragazzi», regola sul nome dei metodi (`bb9ab46`, `235108b`). Verificato online il 9/10.
-- ⚠️ Skill: oggi nessuna skill copre questo sito. Quando il percorso genitori avrà i suoi materiali, decidere se nasce `percorsi-content` o se si estende `copy-clinico`, e registrarlo in `skill-registry`.
+- Skill: deciso il 10/10/2026 di estendere `copy-clinico` con un ramo «percorsi» (niente `percorsi-content`). Finché l'estensione non è fatta e registrata in `skill-registry`, nessuna skill copre questo sito.
 
 ## Connessioni
 
