@@ -1,6 +1,14 @@
 {% comment %}
   Modulo di contatto dell'incubatore. Derivato da quello di Equilibrio (21/08/2026)
-  e ridotto all'osso: niente pixel, niente eventi, niente conversioni.
+  e ridotto all'osso: niente pixel, niente eventi superflui.
+  Conversione (P08, 12/10/2026): UNA sola, «PERC Genitori · Modulo consegnato»,
+  inviata dentro consegnato(), cioè solo dopo {"ok":true}, solo per
+  source="Percorsi - Genitori" e solo se il visitatore ha detto sì al banner
+  (window.percConv la scarta altrimenti). Nessun dato del modulo va a Google.
+  Parametro "da" (P06, decisione del 9/10): il rimando dalle schede porta
+  ?da=scheda-<slug>; il campo nascosto lo legge e lo invia come "da". Lo script
+  condiviso con Equilibrio oggi lo ignora (non va modificato), ma il valore
+  arriva comunque nella riga «Pagina:» dell'avviso, che è l'indirizzo completo.
   Regola ereditata e non negoziabile: il successo si dichiara SOLO dopo che il
   server ha risposto {"ok":true}. Se la consegna fallisce, la pagina lo dice e
   offre email e WhatsApp con il testo già pronto.
@@ -34,6 +42,7 @@
       <textarea id="cfMsg" name="messaggio" rows="4" placeholder="Quanti anni ha, cosa succede in casa, cosa avete già provato. Puoi non fare nomi."></textarea>
     </div>
     <input type="hidden" id="cfSource" value="{{ form_source }}">
+    <input type="hidden" id="cfDa" value="">
     <p class="cform-error" id="cfError" hidden>Inserisci un indirizzo email valido.</p>
     <button type="submit" class="btn btn-primary" id="cfBtn">Scrivimi, ti rispondo entro 24 ore</button>
     <p class="cform-note">Solo email. Rispondo io, personalmente, con due possibilità di orario per una chiamata di 15 minuti.</p>
@@ -54,6 +63,15 @@
 </div>
 
 <script>
+(function () {
+  /* ?da=scheda-<slug> → campo nascosto. Solo caratteri sicuri, al massimo 80. */
+  try {
+    var da = new URLSearchParams(window.location.search).get('da') || '';
+    da = da.replace(/[^a-z0-9_-]/gi, '').slice(0, 80);
+    var cf = document.getElementById('cfDa'); if (cf) cf.value = da;
+  } catch (e) {}
+})();
+
 (function () {
   var box = document.getElementById('cfChips'), ta = document.getElementById('cfMsg');
   if (!box || !ta) return;
@@ -88,7 +106,10 @@ function cformSubmit(e) {
 
   var ENDPOINT = '{{ site.contact_endpoint }}', chiuso = false;
   function show(id) { ['cformBlock','cformDone','cformFallback'].forEach(function (x) { document.getElementById(x).hidden = (x !== id); }); }
-  function consegnato() { show('cformDone'); }
+  function consegnato() {
+    show('cformDone');
+    if (source === 'Percorsi - Genitori' && typeof window.percConv === 'function') window.percConv('modulo');
+  }
   function nonConsegnato(motivo) {
     if (window.console && console.warn) console.warn('[cform] consegna non confermata:', motivo);
     var oggetto = 'Richiesta dal sito (' + source + ')';
@@ -102,6 +123,7 @@ function cformSubmit(e) {
   var corpo = new URLSearchParams();
   corpo.append('email', email); corpo.append('messaggio', msg);
   corpo.append('source', source); corpo.append('pagina', window.location.href);
+  var da = (document.getElementById('cfDa') || {}).value; if (da) corpo.append('da', da);
   var timer = setTimeout(function () { concludi(nonConsegnato, 'timeout'); }, 15000);
   fetch(ENDPOINT, { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' }, body: corpo.toString() })
     .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.text(); })

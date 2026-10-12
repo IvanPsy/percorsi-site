@@ -1,0 +1,29 @@
+{% comment %}
+  Banner di consenso (P08, 12/10/2026). Incluso da _layouts/default.html solo se
+  ads_tag_id in _config.yml non è vuoto. La logica (salvataggio, caricamento del
+  tag, revoca) sta in _includes/head.html, in window.percConsenso: qui c'è solo
+  la faccia. Due pulsanti dello stesso peso, stesso stile, stessa distanza: dire
+  di no costa quanto dire di sì. Si riapre dal link «Preferenze sui cookie» del
+  footer (id percConsensoApri).
+{% endcomment %}
+<div class="consenso" id="percConsenso" role="dialog" aria-labelledby="percConsensoTitolo" aria-describedby="percConsensoTesto" hidden>
+  <p class="consenso-titolo" id="percConsensoTitolo">Una sola domanda, poi leggi in pace</p>
+  <p class="consenso-testo" id="percConsensoTesto">Posso usare un cookie di Google Ads per sapere se gli annunci aiutano qualcuno a trovarmi e a scrivermi? Serve a me per contare, non a Google per profilarti: niente pubblicità che ti segue, e quello che mi scrivi non gli arriva mai. Se dici no, il sito funziona uguale. <a href="{{ '/privacy/' | relative_url }}#annunci">Cosa succede, nel dettaglio</a>.</p>
+  <div class="consenso-azioni">
+    <button type="button" class="consenso-btn" id="percConsensoSi">Sì, va bene</button>
+    <button type="button" class="consenso-btn" id="percConsensoNo">No, grazie</button>
+  </div>
+</div>
+<script>
+(function () {
+  var box = document.getElementById('percConsenso');
+  if (!box || !window.percConsenso) return;
+  function apri() { box.hidden = false; }
+  function chiudi() { box.hidden = true; }
+  document.getElementById('percConsensoSi').addEventListener('click', function () { chiudi(); window.percConsenso.si(); });
+  document.getElementById('percConsensoNo').addEventListener('click', function () { chiudi(); window.percConsenso.no(); });
+  var link = document.getElementById('percConsensoApri');
+  if (link) link.addEventListener('click', function (e) { e.preventDefault(); apri(); });
+  if (!window.percConsenso.scelta()) apri();
+})();
+</script>

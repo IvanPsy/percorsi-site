@@ -10,5 +10,6 @@
 {{ content }}
 </main>
 {% include footer.html %}
+{% if site.ads_tag_id and site.ads_tag_id != "" %}{% include consenso.html %}{% endif %}
 </body>
 </html>

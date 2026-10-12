@@ -32,9 +32,16 @@ nota_costi: "A ogni importo si aggiungono il 2% ENPAP e 2 euro di bollo. Fattura
 # le vie dirette (email e WhatsApp) invece di fingere di aver inviato.
 contact_endpoint: "https://script.google.com/macros/s/AKfycbxTh7Ny9BqsWV4TPbgWJlF25nKJPHC_rzHaqXvOgsbHeQmak_xcbKWY5u78-W_WiZE/exec"
 
-# Nessun tag Ads, nessun GA4, nessun font esterno, nessun cookie: il sito non ha
-# bisogno di banner. Se un giorno partono gli annunci, il tag va aggiunto in
-# _includes/head.html insieme a un banner di consenso, e /privacy/ va riscritta.
+# Google Ads, percorso genitori (P07, 12/10/2026; cablato da P08 lo stesso giorno).
+# Le tre chiavi accendono INSIEME: tag in _includes/head.html, banner di consenso
+# (_includes/consenso.html), paragrafo dedicato in /privacy/ e nota nel footer.
+# Vuote = nessun tag, nessun banner, sito senza cookie come prima.
+# Il tag parte SOLO dopo il consenso (Consent Mode di base): chi rifiuta non
+# carica niente da Google. Nessun GA4 (STRATEGIA-GENITORI §4.3), nessuna
+# conversione avanzata (allow_enhanced_conversions: false nel tag).
+ads_tag_id: "AW-1004214539"               # lo stesso tag di Equilibrio (stesso account)
+ads_label_modulo: "21lACIvWxpodEIuy7N4D"  # «PERC Genitori · Modulo consegnato» (principale)
+ads_label_whatsapp: "PQ6TCI7WxpodEIuy7N4D" # «PERC Genitori · Clic WhatsApp» (secondaria)
 
 markdown: kramdown
 permalink: pretty

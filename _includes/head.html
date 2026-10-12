@@ -23,3 +23,102 @@
 }
 </script>
 <link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}">
+{% if site.ads_tag_id and site.ads_tag_id != "" %}{% comment %}
+  ═══ Google Ads con consenso preventivo (P08, 12/10/2026) ═══
+  Si accende solo se ads_tag_id in _config.yml non è vuoto.
+  Regole che questo blocco garantisce, e che non vanno rotte:
+  1. NIENTE parte prima del consenso. Qui si prepara solo la coda (dataLayer) con
+     tutti i consensi negati; gtag.js viene scaricato da Google SOLO dopo il «sì»
+     (Consent Mode di base, non avanzata come Equilibrio: chi rifiuta non manda
+     nemmeno ping anonimi).
+  2. Niente remarketing: ad_personalization resta negato anche dopo il sì.
+  3. Niente conversioni avanzate: allow_enhanced_conversions false, nessun user_data.
+  4. Cookie solo su questo sottodominio (cookie_domain), non su .ivanferrero.it
+     dove li leggerebbe anche Equilibrio.
+  5. Le conversioni partono solo a consenso dato: window.percConv() le scarta se
+     il tag non è caricato, così un evento in coda non diventa una conversione
+     inviata dopo un consenso arrivato più tardi.
+  La scelta vive nel browser (localStorage, chiave perc_consenso_v1) e scade
+  dopo 180 giorni: allora il banner si ripresenta. Banner: _includes/consenso.html.
+{% endcomment %}
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('consent', 'default', {
+    'ad_storage': 'denied', 'ad_user_data': 'denied',
+    'ad_personalization': 'denied', 'analytics_storage': 'denied'
+  });
+  (function () {
+    var KEY = 'perc_consenso_v1', DURATA = 180 * 24 * 3600 * 1000;
+    var TAG = '{{ site.ads_tag_id }}';
+    var ETICHETTE = { modulo: '{{ site.ads_label_modulo }}', whatsapp: '{{ site.ads_label_whatsapp }}' };
+    var caricato = false;
+
+    function leggi() {
+      try {
+        var d = JSON.parse(localStorage.getItem(KEY) || 'null');
+        if (!d || (d.scelta !== 'si' && d.scelta !== 'no')) return null;
+        if (!d.quando || Date.now() - d.quando > DURATA) return null;
+        return d.scelta;
+      } catch (e) { return null; }
+    }
+    function scrivi(scelta) {
+      try { localStorage.setItem(KEY, JSON.stringify({ scelta: scelta, quando: Date.now() })); } catch (e) {}
+    }
+    function carica() {
+      if (caricato) return;
+      caricato = true;
+      gtag('consent', 'update', { 'ad_storage': 'granted', 'ad_user_data': 'granted' });
+      gtag('js', new Date());
+      gtag('config', TAG, {
+        'allow_enhanced_conversions': false,
+        'allow_ad_personalization_signals': false,
+        'cookie_domain': window.location.hostname
+      });
+      var s = document.createElement('script');
+      s.async = true;
+      s.src = 'https://www.googletagmanager.com/gtag/js?id=' + encodeURIComponent(TAG);
+      document.head.appendChild(s);
+    }
+    function togliCookie() {
+      /* Alla revoca: via i cookie di Google Ads scritti su questo sottodominio. */
+      document.cookie.split(';').forEach(function (c) {
+        var nome = c.split('=')[0].trim();
+        if (/^(_gcl_|_gac_)/.test(nome)) {
+          document.cookie = nome + '=; Max-Age=0; path=/; domain=' + window.location.hostname;
+          document.cookie = nome + '=; Max-Age=0; path=/';
+        }
+      });
+    }
+
+    window.percConsenso = {
+      scelta: leggi,
+      si: function () { scrivi('si'); carica(); },
+      no: function () {
+        var eraSi = caricato;
+        scrivi('no');
+        gtag('consent', 'update', { 'ad_storage': 'denied', 'ad_user_data': 'denied' });
+        togliCookie();
+        /* Se il tag era già caricato, l'unico modo pulito di fermarlo è ricaricare. */
+        if (eraSi) window.location.reload();
+      }
+    };
+    /* Conversione: parte solo se il tag è caricato, cioè a consenso dato. */
+    window.percConv = function (tipo) {
+      var et = ETICHETTE[tipo];
+      if (!caricato || !et) return;
+      gtag('event', 'conversion', { 'send_to': TAG + '/' + et });
+    };
+
+    if (leggi() === 'si') carica();
+
+{% if page.url contains '/genitori/' %}    /* Clic su WhatsApp, azione secondaria: solo sulla pagina dei genitori,
+       perché l'etichetta è quella della campagna genitori. Conta anche il link
+       del blocco di ripiego del modulo: è comunque un clic, e l'azione è secondaria. */
+    document.addEventListener('click', function (e) {
+      var a = e.target.closest ? e.target.closest('a[href*="wa.me"]') : null;
+      if (a) window.percConv('whatsapp');
+    });
+{% endif %}  })();
+</script>
+{% endif %}
