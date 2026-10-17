@@ -41,7 +41,7 @@ Filo che lega i percorsi: **si lavora con chi sta accanto al problema** (genitor
 
 - 2026-10-07: repo creato in locale con home, `/genitori/`, `/privacy/`. **Non ancora su GitHub, DNS non ancora puntato.** Prossimi passi di Ivan: creare il repo `percorsi-site` su GitHub (IvanPsy), push, attivare Pages con il CNAME, aggiungere su Aruba il record CNAME `percorsi` → `ivanpsy.github.io`, poi link dalla home di ivanferrero.it. Prima di accendere annunci: preparazione clinica (manuale di Lebowitz, FASA, materiali per i genitori), stimata in due o tre settimane.
 - Candidata successiva: familiari di chi gioca d'azzardo (pacchetto prepagato come parte del setting).
-- 2026-10-07 sera: sito online su https://percorsi.ivanferrero.it/ con HTTPS forzato (repo su GitHub IvanPsy/percorsi-site, CNAME su Aruba). Lavori successivi affidati a chat separate: link dalla home di ivanferrero.it, preparazione clinica del percorso genitori in `clinica/percorsi/genitori/` (da creare), pagina `familiari-gioco/`.
+- 2026-10-07 sera: sito online su https://percorsi.ivanferrero.it/ con HTTPS forzato (repo su GitHub IvanPsy/percorsi-site, CNAME su Aruba). Lavori successivi affidati a chat separate: link dalla home di ivanferrero.it, preparazione clinica del percorso genitori (oggi nel corpus, `~/corpus/clinica/framework/percorso_genitori/`), pagina `familiari-gioco/`.
 - 2026-10-10: valutazione portata da €150 a €230, come Equilibrio (un prezzo solo per la valutazione in tutta la pratica privata); totale di `/genitori/` da 1.520 a 1.600. In copia locale, push di Ivan.
 - 2026-10-08: online il link dalla home (card Psicoterapia) e dal footer di ivanferrero.it (commit `f30c4e9` di quel repo) e le tre correzioni di `/genitori/`: totale 1.520, «alcuni ragazzi», regola sul nome dei metodi (`bb9ab46`, `235108b`). Verificato online il 9/10.
 - Skill: deciso il 10/10/2026 di estendere `copy-clinico` con un ramo «percorsi» (niente `percorsi-content`). Finché l'estensione non è fatta e registrata in `skill-registry`, nessuna skill copre questo sito.
@@ -49,6 +49,6 @@ Filo che lega i percorsi: **si lavora con chi sta accanto al problema** (genitor
 
 ## Connessioni
 
-- `clinica/framework/dipendenze-sessuali_framework/framework-clinico/de_cartella_lavoro/sito/equilibrio-contatti.gs`: lo script che riceve il modulo (condiviso con Equilibrio; il campo `source` distingue le pagine).
-- `clinica/framework/framework-schermi/`: il framework sistemico che questa pagina volutamente NON usa (il paziente qui è l'adulto); se un caso richiede la geometria famiglia-designato, è lì.
+- `~/corpus/clinica/framework/dipendenze-sessuali_framework/equilibrio_retrobottega/de_cartella_lavoro/sito/equilibrio-contatti.gs`: lo script che riceve il modulo (condiviso con Equilibrio; il campo `source` distingue le pagine).
+- `~/corpus/clinica/framework/framework-schermi/`: il framework sistemico che questa pagina volutamente NON usa (il paziente qui è l'adulto); se un caso richiede la geometria famiglia-designato, è lì.
 - `divulgazione/schede_genitori/`: materiale per i genitori riutilizzabile come oggetto che esce dalla stanza.
